@@ -6,8 +6,14 @@
   <url>
     <loc>https://anuragbirthare1988.github.io/cgscafe/</loc>
     <lastmod>2026-02-21</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
+
+    <image:image>
+      <image:loc>https://anuragbirthare1988.github.io/cgscafe/images/logo.png</image:loc>
+      <image:title>CGS Cafe - Coffee Grill Shots</image:title>
+    </image:image>
+
   </url>
 
 </urlset>
