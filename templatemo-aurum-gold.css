@@ -880,7 +880,7 @@ section {
 	background: var(--bg-card);
 }
 
-.products-tabs {
+.tabs {
 	display: flex;
 	justify-content: center;
 	gap: 8px;
@@ -919,12 +919,12 @@ section {
 }
 
 /* Products Tab Content */
-.products-tab-content {
+.tab-content {
 
 	display: none;
 }
 
-.products-tab-content.active {
+.tab-content.active {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: 24px;
@@ -932,7 +932,7 @@ section {
 
 @media (max-width: 1200px) {
 
-	.products-tab-content.active,
+	.tab-content.active,
 	.products-grid {
 		grid-template-columns: repeat(3, 1fr);
 		gap: 20px;
@@ -941,7 +941,7 @@ section {
 
 @media (max-width: 900px) {
 
-	.products-tab-content.active,
+	.tab-content.active,
 	.products-grid {
 		grid-template-columns: repeat(2, 1fr);
 		gap: 16px;
@@ -950,7 +950,7 @@ section {
 
 @media (max-width: 480px) {
 
-	.products-tab-content.active,
+	.tab-content.active,
 	.products-grid {
 		grid-template-columns: 1fr;
 		gap: 16px;
@@ -981,7 +981,7 @@ section {
 }
 
 .product-card {
-	background: rgba(15, 14, 12, 0.58);
+	background: rgb(56 38 26);
     border: 1px solid #725e5e;
 	overflow: hidden;
 	transition: all 0.4s ease;
@@ -1586,7 +1586,7 @@ section {
 		width: 100%;
 	}
 
-	.products-tabs {
+	.tabs {
 		flex-wrap: wrap;
 	}
 
@@ -2765,7 +2765,6 @@ section {
 .address-map { }
 
 .copyright-infringement {
-    color: #888887;
     line-height: 1.8;
 	margin-top: 5px;
 }
@@ -2773,9 +2772,11 @@ section {
 .copyright-infringement .label {
 	font-size: 10px;
     font-weight: 600;
+	color: hsl(var(--gold) / .7);
 }
 
 .copyright-infringement p {
+    color: #888887;
 	margin-top: 5px;
 }
 
@@ -2887,3 +2888,29 @@ ul li.why-item { border: none;}
 }
 
 .h1-header { font-size: 20px; margin-top: 15px; color: #fcc04f;}
+
+.menu-section .tab-content.active { 
+	display:grid;
+    grid-template-columns: auto;
+}
+
+.text-coffee-brown { color: var(--coffee-brown);}
+
+.my-2 {
+    margin-top: .50rem;
+    margin-bottom: .50rem;
+}
+.my-4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.product-quantity {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.product-quantity .serving-quantity {
+	background: #e7bd77;
+    color: #000;
+}

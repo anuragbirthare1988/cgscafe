@@ -105,7 +105,7 @@ window.addEventListener('scroll', highlightNavOnScroll);
 
 // Product tabs
 const tabBtns = document.querySelectorAll('.tab-btn');
-const tabContents = document.querySelectorAll('.products-tab-content');
+const tabContents = document.querySelectorAll('.tab-content');
 
 tabBtns.forEach(btn => {
    btn.addEventListener('click', () => {
@@ -128,77 +128,3 @@ tabBtns.forEach(btn => {
       }
    });
 });
-
-// Testimonial Slider
-const testimonialsTrack = document.getElementById('testimonialsTrack');
-const testimonialDots = document.querySelectorAll('#testimonialDots .dot');
-const testimonialPrev = document.getElementById('testimonialPrev');
-const testimonialNext = document.getElementById('testimonialNext');
-const totalTestimonials = testimonialDots.length;
-let currentTestimonial = 0;
-
-function goToTestimonial(index) {
-   if (index < 0) index = totalTestimonials - 1;
-   if (index >= totalTestimonials) index = 0;
-
-   currentTestimonial = index;
-   testimonialsTrack.style.transform = `translateX(-${currentTestimonial * 100}%)`;
-
-   testimonialDots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === currentTestimonial);
-   });
-}
-
-testimonialDots.forEach((dot, index) => {
-   dot.addEventListener('click', () => {
-      goToTestimonial(index);
-   });
-});
-
-testimonialPrev.addEventListener('click', () => {
-   goToTestimonial(currentTestimonial - 1);
-});
-
-testimonialNext.addEventListener('click', () => {
-   goToTestimonial(currentTestimonial + 1);
-});
-
-// Auto-advance testimonials every 6 seconds
-let testimonialAutoPlay = setInterval(() => {
-   goToTestimonial(currentTestimonial + 1);
-}, 6000);
-
-// Pause auto-play on hover
-document.querySelector('.testimonials-wrapper').addEventListener('mouseenter', () => {
-   clearInterval(testimonialAutoPlay);
-});
-
-document.querySelector('.testimonials-wrapper').addEventListener('mouseleave', () => {
-   testimonialAutoPlay = setInterval(() => {
-      goToTestimonial(currentTestimonial + 1);
-   }, 6000);
-});
-
-// Form submission
-const contactForm = document.getElementById('contactForm');
-contactForm.addEventListener('submit', (e) => {
-   e.preventDefault();
-   alert('Thank you for your inquiry! Our team will contact you within 24 hours.');
-   contactForm.reset();
-});
-
-// Simulate live price updates (for demo purposes)
-function updatePrices() {
-   const priceElement = document.querySelector('.price-value');
-   const changeElement = document.querySelector('.price-change');
-
-   // Random price fluctuation for demo
-   const basePrice = 4285.50;
-   const fluctuation = (Math.random() - 0.5) * 10;
-   const newPrice = (basePrice + fluctuation).toFixed(2);
-
-   // This is just for visual effect - in production, connect to real API
-}
-
-// Update prices every 30 seconds (demo)
-setInterval(updatePrices, 30000);

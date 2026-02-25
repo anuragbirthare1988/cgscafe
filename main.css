@@ -718,6 +718,10 @@ h4,h5 {
     height: 1rem
 }
 
+.h-1 {
+    height: .25rem
+}
+
 .h-1\.5 {
     height: .375rem
 }
@@ -858,6 +862,10 @@ h4,h5 {
     width: 3rem
 }
 
+.w-14 {
+    width: 3.5rem
+}
+
 .w-2 {
     width: .5rem
 }
@@ -871,7 +879,7 @@ h4,h5 {
 }
 
 .w-3\.5 {
-    width: 1.5rem
+    width: .875rem
 }
 
 .w-3\/4 {
@@ -895,7 +903,7 @@ h4,h5 {
 }
 
 .w-7 {
-    width: 1.75rem
+    width: 1.75rem;
 }
 
 .w-72 {
@@ -1383,6 +1391,10 @@ h4,h5 {
     border-color: hsl(var(--gold))
 }
 
+.border-gold\/20 {
+    border-color: hsl(var(--gold) / .2)
+}
+
 .border-gold\/30 {
     border-color: hsl(var(--gold) / .3)
 }
@@ -1760,6 +1772,10 @@ h4,h5 {
 
 .pt-1 {
     padding-top: .25rem
+}
+
+.pt-2\.5 {
+    padding-top: .625rem
 }
 
 .pt-3 {
