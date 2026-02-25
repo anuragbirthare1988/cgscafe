@@ -269,7 +269,8 @@ img,video {
 }
 
 html {
-    scroll-behavior: smooth
+    scroll-behavior: smooth;
+    font-size: 16px; /* 1rem = 16px */
 }
 
 body {
@@ -277,7 +278,14 @@ body {
     /* color:hsl(var(--foreground)); */
     font-family: Montserrat,sans-serif;
     font-weight: 300;
-    -webkit-font-smoothing: antialiased
+    -webkit-font-smoothing: antialiased;
+    font-size: 1rem; /* 16px */
+}
+
+@media (max-width: 599px) {
+  html {
+    font-size: 14px; /* All 1rem (16px) elements now become 14px. 1rem = 16px is defined as default in html tag's css declaration */
+  }
 }
 
 h1,h2,h3 {
@@ -1452,6 +1460,10 @@ h4,h5 {
 
 .bg-gold {
     background-color: hsl(var(--gold))
+}
+
+.bg-gold\/10 {
+    background-color: hsl(var(--gold) / .1)
 }
 
 .bg-gold\/20 {

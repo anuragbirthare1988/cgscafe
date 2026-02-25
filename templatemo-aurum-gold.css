@@ -115,14 +115,6 @@ img {
 	justify-content: space-between;
 }
 
-.logo {
-	font-family: 'Playfair Display', serif;
-	font-size: 28px;
-	color: var(--gold-light);
-	letter-spacing: 0.15em;
-	text-transform: uppercase;
-}
-
 .nav-links {
 	display: flex;
 	align-items: center;
@@ -2730,9 +2722,10 @@ section {
 .logo {
 	top: 25px;
 	font-family: 'Bebas Neue', sans-serif;
-	font-size: 28px;
+	font-size: 1.75rem;
 	letter-spacing: 0.15em;
 	text-transform: uppercase;
+	color: var(--gold-light);
 }
 .logo:hover { opacity: 0.8;}
 .logo img { height: 4rem;}
@@ -2768,18 +2761,22 @@ section {
 
 .tagline { font-size: 1rem; font-style: italic; font-weight: 600; letter-spacing: 0.1rem;}
 
-.footer-row {
-	grid-template-columns: 2fr 1fr 1fr 1fr; /* Creates three columns of equal width */
-}
-
-.footer-column { }
+.address { min-width: 200px;}
+.address-map { }
 
 .copyright-infringement {
-	font-size: 14px;
     color: #888887;
     line-height: 1.8;
-    max-width: 360px;
-	margin-top: 18px;
+	margin-top: 5px;
+}
+
+.copyright-infringement .label {
+	font-size: 10px;
+    font-weight: 600;
+}
+
+.copyright-infringement p {
+	margin-top: 5px;
 }
 
 .social-icon img { width: 32px;}
