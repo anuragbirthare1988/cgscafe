@@ -276,7 +276,7 @@ html {
 body {
     /* background-color:hsl(var(--background)); */
     /* color:hsl(var(--foreground)); */
-    font-family: Montserrat,sans-serif;
+    /* font-family: Montserrat,sans-serif; */
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
     font-size: 1rem; /* 16px */
@@ -541,6 +541,36 @@ h4,h5 {
     margin-bottom: .25rem
 }
 
+.mx-4 {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.my-4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.mx-8 {
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.my-8 {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.mx-16 {
+    margin-left: 4rem;
+    margin-right: 4rem;
+}
+
+.my-16 {
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+}
+
 .-ml-4 {
     margin-left: -1rem
 }
@@ -759,7 +789,7 @@ h4,h5 {
 }
 
 .h-3\.5 {
-    height: 1.5rem
+    height: .875rem
 }
 
 .h-4 {

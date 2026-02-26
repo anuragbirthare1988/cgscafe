@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ – CGS Coffee, Grill & Shots</title>
+  <meta name="description" content="Frequently asked questions about CGS — Coffee, Grill & Shots, Indore's modern European boutique café." />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --background: #F4EFEA;
+      --foreground: #2C2C2C;
+      --espresso: #1B1412;
+      --gold: #C6A15B;
+      --gold-40: rgba(198,161,91,0.4);
+      --muted-fg: #666;
+      --border: #d4ccc4;
+      --card: #f9f7f5;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      background: var(--background);
+      color: var(--foreground);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    .faq-header {
+      background: var(--espresso);
+      padding: 8rem 1.5rem 5rem;
+      text-align: center;
+    }
+    .faq-header .subtitle {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--gold);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .faq-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    .faq-header .tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: rgba(255,255,255,0.5);
+      font-size: 1.25rem;
+    }
+    .gold-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      display: block;
+      margin: 1.5rem auto 0;
+    }
+
+    /* Sections */
+    .faq-sections {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+    }
+    .faq-section { margin-bottom: 4rem; }
+    .faq-section:last-child { margin-bottom: 0; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-header .gold-divider { margin: 0; }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Accordion */
+    .accordion-item {
+      border: 1px solid var(--border);
+      background: var(--card);
+      margin-bottom: 0.5rem;
+      transition: border-color 0.3s;
+    }
+    .accordion-item[data-state="open"] {
+      border-color: var(--gold-40);
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      color: var(--foreground);
+      text-align: left;
+      transition: color 0.3s;
+    }
+    .accordion-trigger:hover { color: var(--gold); }
+
+    .accordion-trigger svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+      stroke: currentColor;
+    }
+    .accordion-item[data-state="open"] .accordion-trigger svg {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      padding: 0 1.5rem;
+    }
+    .accordion-item[data-state="open"] .accordion-content {
+      max-height: 300px;
+      padding: 0 1.5rem 1.25rem;
+    }
+
+    .accordion-content p {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 300;
+      color: var(--muted-fg);
+      line-height: 1.7;
+    }
+
+    /* CTA */
+    .cta {
+      background: var(--espresso);
+      padding: 5rem 1.5rem;
+      text-align: center;
+    }
+    .cta h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.875rem;
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    .cta .cta-sub {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+    .btn-outline-gold {
+      display: inline-block;
+      background: transparent;
+      color: var(--gold);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      padding: 0.875rem 2.5rem;
+      border: 1px solid var(--gold);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-outline-gold:hover {
+      background: var(--gold);
+      color: var(--espresso);
+    }
+
+    @media (max-width: 640px) {
+      .faq-header h1 { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="faq-header">
+    <p class="subtitle">Common Questions</p>
+    <h1>FAQ</h1>
+    <p class="tagline">Everything you need to know about CGS</p>
+    <span class="gold-divider"></span>
+  </div>
+
+  <!-- FAQ SECTIONS -->
+  <div class="faq-sections">
+
+    <!-- About CGS -->
+    <div class="faq-section">
+      <div class="section-header">
+        <span class="gold-divider"></span>
+        <h2>About CGS</h2>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          What is CGS?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>CGS stands for Coffee, Grill &amp; Shots — a modern European boutique café located in Indore. We specialise in crafted instant coffee beverages, grilled sandwiches, refreshing shots, and more.</p></div>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          What makes CGS different from other cafés?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>We've built our entire menu around the science of instant coffee — no espresso machines, no conventional barista approach. Every recipe is calibrated for precision, consistency, and taste. Paired with a soothing ambience, CGS offers a unique experience.</p></div>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          What are your operating hours?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>We are open Monday through Sunday, 11:00 AM to 11:00 PM. You can also find our hours and contact details at the bottom of every page on our website.</p></div>
+      </div>
+    </div>
+
+    <!-- Menu & Ordering -->
+    <div class="faq-section">
+      <div class="section-header">
+        <span class="gold-divider"></span>
+        <h2>Menu &amp; Ordering</h2>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          Do you offer online ordering or delivery?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>Currently, CGS is a dine-in experience only. We focus on freshly prepared items served at the perfect temperature and presentation. We do not offer online sales at this time.</p></div>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          Are there different serving sizes available?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>Yes! Select cold beverages including Cold Coffee, Frappes, and cookie-based Shakes (like Oreo &amp; Biscoff) are available in two sizes — Regular (300 ml) and Grande (420 ml). Check the menu for items marked with the size indicator.</p></div>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          Do you serve non-vegetarian food?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>Our current menu is vegetarian-friendly. We offer a variety of grilled sandwiches, pasta, and salads crafted with fresh, quality ingredients.</p></div>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          Can I customise my order?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>We appreciate your preferences! While our recipes are carefully calibrated, you can request adjustments like sugar level or milk type. Please speak with our staff for available modifications.</p></div>
+      </div>
+    </div>
+
+    <!-- Corporate & Events -->
+    <div class="faq-section">
+      <div class="section-header">
+        <span class="gold-divider"></span>
+        <h2>Corporate &amp; Events</h2>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          Do you take bulk or corporate orders?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>Absolutely. We cater to corporate events, private parties, and special occasions. Visit our Corporate &amp; Party Orders page or reach out through our social media for custom packages.</p></div>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          Can I book CGS for a private event?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>Yes, we accommodate private gatherings and celebrations. Contact us through our website or social media to discuss availability and arrangements.</p></div>
+      </div>
+    </div>
+
+    <!-- Careers & Collaboration -->
+    <div class="faq-section">
+      <div class="section-header">
+        <span class="gold-divider"></span>
+        <h2>Careers &amp; Collaboration</h2>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          Are you hiring?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>We're always looking for passionate individuals who share our values. Visit our Careers page to learn about current opportunities and how to apply.</p></div>
+      </div>
+      <div class="accordion-item" data-state="closed">
+        <button class="accordion-trigger">
+          Do you collaborate with influencers or brands?
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-content"><p>We're open to meaningful collaborations that align with our brand values. Reach out through our social media channels with your proposal.</p></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <span class="gold-divider" style="margin-bottom:1.5rem"></span>
+    <h2>Still Have Questions?</h2>
+    <p class="cta-sub">Reach out to us through our social media channels</p>
+    <a href="corporate-orders.html" class="btn-outline-gold">Get in Touch</a>
+  </div>
+
+  <!-- ACCORDION SCRIPT -->
+  <script>
+    document.querySelectorAll('.accordion-trigger').forEach(function(trigger) {
+      trigger.addEventListener('click', function() {
+        var item = this.closest('.accordion-item');
+        var isOpen = item.getAttribute('data-state') === 'open';
+
+        // Close all siblings in the same section
+        item.parentElement.querySelectorAll('.accordion-item').forEach(function(sibling) {
+          sibling.setAttribute('data-state', 'closed');
+        });
+
+        // Toggle clicked item
+        if (!isOpen) {
+          item.setAttribute('data-state', 'open');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
