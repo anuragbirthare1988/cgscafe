@@ -42,7 +42,7 @@
 
 html {
 	scroll-behavior: smooth;
-	font-size: 16px;
+	/* font-size: 16px; */
 }
 
 body {
@@ -373,7 +373,6 @@ body.menu-open {
 
 .logo-wrapper {
 	position: relative;
-	min-width: 300px;
 }
 
 /* Hero Section */
@@ -862,6 +861,13 @@ section {
 
 /* Mobile - 2 column layout */
 @media (max-width: 600px) {
+	.logo-wrapper {
+		position: relative;
+		min-width: 300px;
+	}
+	.tagline {
+		letter-spacing: 8px;
+	}
 	form iframe { width: 370px;}
 	.services-grid {
 		grid-template-columns: 1fr;
@@ -2061,6 +2067,9 @@ section {
 }
 
 @media (min-width: 640px) {
+	.tagline {
+		letter-spacing: 10px;
+	}
 	.sm\:bottom-0 {
 		bottom: 0
 	}
@@ -2734,21 +2743,18 @@ section {
 	font-family: 'Bebas Neue', sans-serif;
 	font-size: 1rem;
 	font-weight: 600;
-	letter-spacing: 0.1rem;
 	color: var(--gold-light);
-	letter-spacing: 10px;
 	word-spacing: 15px;
 	text-shadow:  1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
 }
 .logo .tagline { 
 	text-align: center;
 	line-height: 15px;
-	letter-spacing: 10px;
 }
 .logo {
 	top: 25px;
 	font-family: 'Bebas Neue', sans-serif;
-	font-size: 1.75rem;
+	font-size: 1.5rem;
 	letter-spacing: 0.15em;
 	text-transform: uppercase;
 	color: var(--gold-light);
