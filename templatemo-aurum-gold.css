@@ -869,7 +869,7 @@ p {
 		font-size: .875rem; /* All 1rem (16px) elements now become 14px. 1rem = 16px is defined as default in html tag's css declaration */
 	}
 	p, ul {
-		font-size:1.25rem;
+		font-size:1rem;
 	}
 	.logo-wrapper {
 		position: relative;
