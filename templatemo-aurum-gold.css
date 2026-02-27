@@ -42,6 +42,7 @@
 
 html {
 	scroll-behavior: smooth;
+	font-size: 16px;
 }
 
 body {
@@ -370,7 +371,10 @@ body.menu-open {
 	overflow: hidden;
 }
 
-.logo-wrapper { position: relative;}
+.logo-wrapper {
+	position: relative;
+	min-width: 400px;
+}
 
 /* Hero Section */
 .hero {
@@ -792,7 +796,6 @@ section {
 }
 
 .why-text p {
-	font-size: 14px;
 	color: var(--text-secondary);
 	line-height: 1.7;
 }
@@ -2840,7 +2843,6 @@ section {
 
 .multi-para-section {
 	color: hsl(var(--muted-foreground));
-	font-size: .875rem;
     line-height: 25px;	
 	border-bottom: 1px solid #dedada;
 	padding-bottom: 15px;
