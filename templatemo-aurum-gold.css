@@ -875,6 +875,7 @@ p {
 		position: relative;
 		min-width: 300px;
 	}
+	footer { padding-bottom: 100px;}
 	.tagline {
 		letter-spacing: 8px;
 	}
