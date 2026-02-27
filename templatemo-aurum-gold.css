@@ -1365,6 +1365,8 @@ section {
 	padding: 5px;
 }
 
+.contact-form-wrapper { overflow: auto;}
+
 .form-row {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
