@@ -70,14 +70,15 @@ body::before {
 
 h1,
 h2,
-h3,
-h4,
-h5,
 h6 {
 	font-family: 'Playfair Display', serif;
 	font-weight: 500;
 	line-height: 1.2;
 	letter-spacing: 0.02em;
+}
+
+h4,h5 {
+    font-family: Cormorant Garamond,serif
 }
 
 a {
@@ -995,10 +996,6 @@ p {
 		margin-bottom: 12px;
 	}
 
-	.product-short-summary {
-		font-size: 22px;
-	}
-
 	.product-btn {
 		width: 36px;
 		height: 36px;
@@ -1071,19 +1068,17 @@ p {
 	margin-bottom: 16px;
 }
 
-.product-footer {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+.product-footer { }
+
+.product-summary {
+    overflow: auto;
+    font-family: Cormorant Garamond, serif;
+    font-style: italic;
+    font-size: 1.25rem;
 }
 
-.product-short-summary {
-	font-family: 'Montserrat', serif;
-	font-size: 12px;
-	color: #eeeeee;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-    letter-spacing: 0.5px;
-    word-spacing: 3px;
+.signature-picks .product-summary {
+	height: 140px;
 }
 
 .product-btn {
@@ -2929,6 +2924,15 @@ ul li.why-item { border: none;}
     grid-template-columns: auto;
 }
 
+.menu-section .product-info {
+    color: #333;
+    padding: 0;
+}
+
+.menu-section .product-summary {
+	height: 70px;
+}
+
 .text-coffee-brown { color: var(--coffee-brown);}
 
 .my-2 {
@@ -2942,7 +2946,6 @@ ul li.why-item { border: none;}
 
 .product-quantity {
     margin-top: 1rem;
-    margin-bottom: 1rem;
 }
 
 .product-quantity .serving-quantity {

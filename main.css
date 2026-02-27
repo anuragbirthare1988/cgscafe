@@ -244,6 +244,7 @@ img,video {
     --radius: .25rem;
     --espresso: 13 20% 9%;
     --espresso-light: 11, 49%, 14%;
+    --coffee-gold-custom: #ebc182;
     --gold: 40 60% 56%;
     --sage: 99 7% 49%;
     --linen: 30 31% 94%;
@@ -278,14 +279,6 @@ body {
     /* font-family: Montserrat,sans-serif; */
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
-}
-
-h1,h2,h3 {
-    font-family: Playfair Display,serif
-}
-
-h4,h5 {
-    font-family: Cormorant Garamond,serif
 }
 
 .sr-only {
@@ -2418,7 +2411,7 @@ h4,h5 {
 }
 
 .btn-gold {
-    background: hsl(var(--gold));
+    background: var(--gold-light);
     color: hsl(var(--espresso));
     font-family: Montserrat,sans-serif;
     font-weight: 400;
