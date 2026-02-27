@@ -677,12 +677,6 @@ section {
 	}
 }
 
-@media (max-width: 600px) {
-	.services-grid {
-		grid-template-columns: 1fr;
-	}
-}
-
 .service-card {
 	padding: 48px 32px;
 	background: var(--bg-dark);
@@ -865,6 +859,10 @@ section {
 
 /* Mobile - 2 column layout */
 @media (max-width: 600px) {
+	form iframe { width: 370px;}
+	.services-grid {
+		grid-template-columns: 1fr;
+	}
 	.why-image-grid {
 		grid-template-columns: repeat(2, 1fr);
 		grid-template-rows: auto;
@@ -3034,154 +3032,110 @@ section.content-section:nth-child(even) { background: var(--off-white);}
 }
 
 /* Header */
-    .faq-header {
-      background: var(--espresso);
-      padding: 8rem 1.5rem 5rem;
-      text-align: center;
-    }
-    .faq-header .subtitle {
-      font-family: 'Montserrat', sans-serif;
-      color: var(--gold);
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-    .faq-header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.5rem;
-      font-weight: 500;
-      color: #fff;
-      margin-bottom: 1rem;
-    }
-    .faq-header .tagline {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      color: rgba(255,255,255,0.5);
-      font-size: 1.25rem;
-    }
+.faq-header {
+	background: var(--espresso);
+	padding: 8rem 1.5rem 5rem;
+	text-align: center;
+}
+.faq-header .subtitle {
+	font-family: 'Montserrat', sans-serif;
+	color: var(--gold);
+	font-size: 0.75rem;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	margin-bottom: 1rem;
+}
+.faq-header h1 {
+	font-family: 'Playfair Display', serif;
+	font-size: 3.5rem;
+	font-weight: 500;
+	color: #fff;
+	margin-bottom: 1rem;
+}
+.faq-header .tagline {
+	font-family: 'Cormorant Garamond', serif;
+	font-style: italic;
+	color: rgba(255,255,255,0.5);
+	font-size: 1.25rem;
+}
 
-    /* Sections */
-    .faq-sections {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 5rem 1.5rem;
-    }
-    .faq-section { margin-bottom: 4rem; }
-    .faq-section:last-child { margin-bottom: 0; }
+/* Sections */
+.faq-sections {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 5rem 1.5rem;
+}
+.faq-section { margin-bottom: 4rem; }
+.faq-section:last-child { margin-bottom: 0; }
 
-    /* .section-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .section-header .gold-divider { margin: 0; }
-    .section-header h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      font-weight: 500;
-      white-space: nowrap;
-    } */
+/* .section-header {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+.section-header .gold-divider { margin: 0; }
+.section-header h2 {
+	font-family: 'Playfair Display', serif;
+	font-size: 1.5rem;
+	font-weight: 500;
+	white-space: nowrap;
+} */
 
-    /* Accordion */
-    .accordion-item {
-      border: 1px solid #d4ccc4;
-      background: #f9f7f5;
-      margin-bottom: 0.5rem;
-      transition: border-color 0.3s;
-    }
-    .accordion-item[data-state="open"] {
-      border-color: 1px solid #d4ccc4;
-    }
+/* Accordion */
+.accordion-item {
+	border: 1px solid #d4ccc4;
+	background: #f9f7f5;
+	margin-bottom: 0.5rem;
+	transition: border-color 0.3s;
+}
+.accordion-item[data-state="open"] {
+	border-color: 1px solid #d4ccc4;
+}
 
-    .accordion-trigger {
-      color: #333;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 1.5rem;
-      cursor: pointer;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.875rem;
-      font-weight: 500;
-      letter-spacing: 0.03em;
-      text-align: left;
-      transition: color 0.3s;
-    }
-    .accordion-trigger:hover { color: var(--gold-accent); }
+.accordion-trigger {
+	color: #333;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1.25rem 1.5rem;
+	cursor: pointer;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 0.875rem;
+	font-weight: 500;
+	letter-spacing: 0.03em;
+	text-align: left;
+	transition: color 0.3s;
+}
+.accordion-trigger:hover { color: var(--gold-accent); }
 
-    .accordion-trigger svg {
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-      transition: transform 0.3s ease;
-      stroke: currentColor;
-    }
-    .accordion-item[data-state="open"] .accordion-trigger svg {
-      transform: rotate(180deg);
-    }
+.accordion-trigger svg {
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+	transition: transform 0.3s ease;
+	stroke: currentColor;
+}
+.accordion-item[data-state="open"] .accordion-trigger svg {
+	transform: rotate(180deg);
+}
 
-    .accordion-content {
-      overflow: hidden;
-      max-height: 0;
-      transition: max-height 0.35s ease, padding 0.35s ease;
-      padding: 0 1.5rem;
-    }
-    .accordion-item[data-state="open"] .accordion-content {
-      max-height: 300px;
-      padding: 0 1.5rem 1.25rem;
-    }
+.accordion-content {
+	overflow: hidden;
+	max-height: 0;
+	transition: max-height 0.35s ease, padding 0.35s ease;
+	padding: 0 1.5rem;
+}
+.accordion-item[data-state="open"] .accordion-content {
+	max-height: 300px;
+	padding: 0 1.5rem 1.25rem;
+}
 
-    .accordion-content p {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--muted-fg);
-      line-height: 1.7;
-    }
-
-    /* CTA */
-    /* .cta {
-      background: var(--espresso);
-      padding: 5rem 1.5rem;
-      text-align: center;
-    }
-    .cta h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.875rem;
-      font-weight: 500;
-      color: #fff;
-      margin-bottom: 1rem;
-    }
-    .cta .cta-sub {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.5);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      margin-bottom: 2rem;
-    }
-    .btn-outline-gold {
-      display: inline-block;
-      background: transparent;
-      color: var(--gold);
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 400;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      padding: 0.875rem 2.5rem;
-      border: 1px solid var(--gold);
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-    .btn-outline-gold:hover {
-      background: var(--gold);
-      color: var(--espresso);
-    }
-
-    @media (max-width: 640px) {
-      .faq-header h1 { font-size: 2.5rem; }
-    } */
+.accordion-content p {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 0.875rem;
+	font-weight: 300;
+	color: var(--muted-fg);
+	line-height: 1.7;
+}
