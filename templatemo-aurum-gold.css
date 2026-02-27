@@ -875,7 +875,6 @@ p {
 		position: relative;
 		min-width: 300px;
 	}
-	footer { padding-bottom: 100px;}
 	.tagline {
 		letter-spacing: 8px;
 	}
@@ -1447,13 +1446,6 @@ p {
 	resize: vertical;
 }
 
-/* Footer */
-.footer {
-	/* background-color: var(--bg-card); */
-	padding: 50px 0 40px;
-	border-top: 1px solid var(--bg-card);
-}
-
 .footer-grid {
 	display: grid;
 	grid-template-columns: 2fr 1fr 1fr 1fr;
@@ -1587,6 +1579,8 @@ p {
 	.form-row {
 		grid-template-columns: 1fr;
 	}
+
+	footer { padding-bottom: 100px;}
 
 	.footer-grid {
 		grid-template-columns: 1fr;
@@ -2160,6 +2154,11 @@ p {
 }
 
 @media (min-width: 768px) {
+
+	.footer {
+		padding: 50px 0 40px;
+		border-top: 1px solid var(--bg-card);
+	}
 	.md\:absolute {
 		position: absolute
 	}
