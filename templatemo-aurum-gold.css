@@ -42,7 +42,7 @@
 
 html {
 	scroll-behavior: smooth;
-	/* font-size: 16px; */
+    font-size: 16px; /* 1rem = 16px */
 }
 
 body {
@@ -859,8 +859,18 @@ section {
 	grid-row: span 2;
 }
 
+p {
+  font-size: 1rem;
+}
+
 /* Mobile - 2 column layout */
 @media (max-width: 600px) {
+	html {
+		font-size: .875rem; /* All 1rem (16px) elements now become 14px. 1rem = 16px is defined as default in html tag's css declaration */
+	}
+	p, ul {
+		font-size:1.25rem;
+	}
 	.logo-wrapper {
 		position: relative;
 		min-width: 300px;
@@ -2947,7 +2957,6 @@ section.content-section:nth-child(even) { background: var(--off-white);}
     margin: 0 20px;
     padding: 10px 15px;
     text-align: center;
-    font-size: .75rem;
     letter-spacing: 0.5px;
     line-height: 1.6;
     color: #6b5b4d; /* warm brown tone */

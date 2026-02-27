@@ -270,7 +270,6 @@ img,video {
 
 html {
     scroll-behavior: smooth;
-    font-size: 16px; /* 1rem = 16px */
 }
 
 body {
@@ -279,20 +278,6 @@ body {
     /* font-family: Montserrat,sans-serif; */
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
-    font-size: 1rem; /* 16px */
-}
-
-p {
-  font-size: 1rem;
-}
-
-@media (max-width: 600px) {
-  html {
-    font-size: 14px; /* All 1rem (16px) elements now become 14px. 1rem = 16px is defined as default in html tag's css declaration */
-  }
-p {
-  font-size:1.25rem;
-}
 }
 
 h1,h2,h3 {
@@ -1872,6 +1857,10 @@ h4,h5 {
 
 .text-\[10px\] {
     font-size: 10px
+}
+
+.text-\[12px\] {
+    font-size: 12px
 }
 
 .text-base {
