@@ -178,7 +178,7 @@ img {
 	top: 0;
 	right: -100%;
 	width: 100%;
-	max-width: 400px;
+	max-width: 350px;
 	height: 100vh;
 	background: var(--bg-card);
 	z-index: 2000;
@@ -1007,7 +1007,7 @@ p {
 }
 
 .product-card {
-	background: rgb(56 38 26);
+	background: #3B1C0A;
     border: 1px solid #725e5e;
 	overflow: hidden;
 	transition: all 0.4s ease;
