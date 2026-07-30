@@ -1,3 +1,114 @@
+// Auto-scroll — gently scrolls the page automatically after load, stops
+// the moment the visitor scrolls manually, and can be re-enabled via the
+// floating toggle button.
+let autoScrollActive = false;
+let autoScrollRAF = null;
+
+function startAutoScroll() {
+      autoScrollActive = true;
+      const btn = document.getElementById('autoscroll-toggle');
+      if (btn) btn.classList.add('active');
+      function step() {
+            if (!autoScrollActive) return;
+            window.scrollBy(0, 1.1);
+            if ((window.innerHeight + window.scrollY) >= (document.body.scrollHeight - 20)) {
+                  stopAutoScroll();
+                  return;
+            }
+            autoScrollRAF = requestAnimationFrame(step);
+      }
+      autoScrollRAF = requestAnimationFrame(step);
+}
+
+function stopAutoScroll() {
+      autoScrollActive = false;
+      if (autoScrollRAF) cancelAnimationFrame(autoScrollRAF);
+      const btn = document.getElementById('autoscroll-toggle');
+      if (btn) btn.classList.remove('active');
+}
+
+function toggleAutoScroll() {
+      if (autoScrollActive) { stopAutoScroll(); } else { startAutoScroll(); }
+}
+
+// Force browser to ignore automatic scroll restoration on reload
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
+// Ensure window jumps back to top on hard refreshes/loads
+window.addEventListener('beforeunload', () => {
+  window.scrollTo(0, 0);
+});
+
+window.addEventListener('load', () => {
+  window.scrollTo(0, 0);
+});
+
+// Scrolling feature for the SCROLL button click on hero banner
+function scrollToFeatures() {
+    const container = document.querySelector('.container .section');
+    if (container) {
+        const headerOffset = 90; // Adjust this to match your sticky header's exact height in pixels
+        const elementPosition = container.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    }
+}
+
+// Draws attention to the toggle once after load, without actually
+// starting to scroll — auto-scroll only begins once the visitor clicks it.
+function nudgeAutoScrollToggle() {
+      const btn = document.getElementById('autoscroll-toggle');
+      if (!btn) return;
+      btn.classList.add('nudge');
+      setTimeout(() => btn.classList.remove('nudge'), 1800);
+}
+
+['wheel', 'touchmove', 'keydown'].forEach((evt) => {
+      window.addEventListener(evt, () => { if (autoScrollActive) stopAutoScroll(); }, { passive: true });
+});
+
+// Image lightbox — click any dish photo to view full-screen
+function openLightbox(src, alt) {
+      const lb = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img');
+      if (!lb || !img) return;
+      img.src = src;
+      img.alt = alt || '';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+      const lb = document.getElementById('lightbox');
+      if (!lb) return;
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+});
+
+// Roast / Botanica theme switcher — global so preloader.html's inline onclick can reach it
+function setCgsTheme(name) {
+      document.documentElement.setAttribute('data-theme', name);
+      try { localStorage.setItem('cgs-theme', name); } catch (e) {}
+      syncThemeSwitchUI();
+}
+
+function syncThemeSwitchUI() {
+      const current = document.documentElement.getAttribute('data-theme') || 'roast';
+      document.querySelectorAll('[data-theme-option]').forEach((el) => {
+            el.classList.toggle('active', el.getAttribute('data-theme-option') === current);
+      });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
       async function loadComponent(id, file) {  // Load the header, footer and miscellaneous UI blocks dynamically to all the pages 
       const el = document.getElementById(id);
@@ -12,7 +123,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             loadComponent("footer", "/components/footer.html"),
             loadComponent("preloader", "/components/preloader.html")
       ]);
-      document.getElementById("currentYear").innerHTML = new Date().getFullYear(); // Get the current year for copyright note
+      syncThemeSwitchUI(); // reflect the persisted Boho/European preference on the newly-loaded header
+      
+      // Get the current year for copyright note
+      const yearEl = document.getElementById("currentYear");
+      if (yearEl) {
+          yearEl.innerHTML = new Date().getFullYear();
+      }
+
       initAllAnimations(); // from animations.js
 
       // Remove selection on (Esc) key
@@ -25,6 +143,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                   }
             }
       });
+
+      // Add a lightweight scroll listener
+      window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+            document.body.classList.add('is-scrolled');
+            } else {
+            document.body.classList.remove('is-scrolled');
+            }
+      });
+
       // Header Menu Navigation scroll effect
       const navbar = document.getElementById('navbar');
             if(navbar){
@@ -92,13 +220,27 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       // Deploying Environment Badge
-      function showDevBadge() {
-            const params = new URLSearchParams(window.location.search);
-            isDevEnv = window.location.href.toLowerCase().includes('dev');
-            //   console.log(params, isDevEnv);
-            const devParam = params.get("dev");
-            if (isDevEnv) {
-                  document.getElementById("dev-badge").style.display = "block";
+      function showEnvironmentBadge() {
+            const hostname = window.location.hostname.toLowerCase();
+            const domainSuffix = ".cgscafe.in";
+
+            // Check if the current hostname ends with our domain and has a prefix
+            if (hostname.endsWith(domainSuffix) && hostname !== domainSuffix.substring(1)) {
+                  // Remove the domain suffix to isolate the prefix (e.g., "qa.cgscafe.in" becomes "qa")
+                  const envPrefix = hostname.replace(domainSuffix, '');
+                  const envName = envPrefix.toUpperCase();
+
+                  const badgeElement = document.getElementById("env-badge");
+                  if (badgeElement) {
+                        badgeElement.textContent = envName; // Dynamically sets DEV, QA, UAT, STAGING, etc.
+                        badgeElement.style.display = "block";
+                  }
+            } else {
+                  // Production environment (cgscafe.in) - keep the badge hidden
+                  const badgeElement = document.getElementById("env-badge");
+                  if (badgeElement) {
+                        badgeElement.style.display = "none";
+                  }
             }
       }
 
@@ -106,7 +248,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             initReveal(); // Initialize animations
             initTabs(); // Initialize tabs
             updateActiveMenu(); // Update the active navigation menu link
-            showDevBadge(); // Shows the badge as "Dev" if URL has dev word in it
+            showEnvironmentBadge(); // Shows the badge as "Dev" if URL has dev word in it
             accordionMenu();
             init404Page();    // Responsible for showing the dynamic messages on clicking on 404 page 
       }
@@ -177,38 +319,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
       // Initialize after DOM is loaded
       document.addEventListener("DOMContentLoaded", initReveal);
-      document.addEventListener("DOMContentLoaded", showDevBadge);
+      document.addEventListener("DOMContentLoaded", showEnvironmentBadge);
       // To run after every route's load, to trigger the active menu link
       document.addEventListener("DOMContentLoaded", updateActiveMenu);
       window.addEventListener("DOMContentLoaded", updateActiveMenu);
       window.addEventListener("popstate", updateActiveMenu);
-
-      function initTabs() {
-            // Product tabs
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabBtns.forEach(btn => {
-                  btn.addEventListener('click', () => {
-                  const tabId = btn.getAttribute('data-tab');
-
-                  // Remove active from all buttons
-                  tabBtns.forEach(b => b.classList.remove('active'));
-                  // Add active to clicked button
-                  btn.classList.add('active');
-
-                  // Hide all tab contents
-                  tabContents.forEach(content => {
-                        content.classList.remove('active');
-                  });
-
-                  // Show selected tab content
-                  const activeContent = document.getElementById('tab-' + tabId);
-                  if (activeContent) {
-                        activeContent.classList.add('active');
-                  }
-                  });
-            });
-      }
 
       // Active menu upon link navigation
       function updateActiveMenu() {
@@ -258,10 +373,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                   btn.addEventListener('click', () => {
                   const tabId = btn.getAttribute('data-tab');
 
-                  // Remove active from all buttons
-                  tabBtns.forEach(b => b.classList.remove('active'));
-                  // Add active to clicked button
-                  btn.classList.add('active');
+                  // Remove active from all buttons, then activate every button
+                  // sharing this data-tab value (keeps the inline bar and the
+                  // floating clip switcher in sync with each other)
+                  tabBtns.forEach(b => {
+                        b.classList.toggle('active', b.getAttribute('data-tab') === tabId);
+                  });
 
                   // Hide all tab contents
                   tabContents.forEach(content => {
@@ -341,9 +458,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
       }
 
-      (function () {    // Immediately Invoked Function Expression (IIFE) for automatically activating the scrolling effect for content revealing feature
-            // console.log('Auto-scrolled for content revealing feature');
-            window.scrollTo(0,0); // Resetting scroll to land at top of page, when navigating
+      (async function () {      // Immediately Invoked Function Expression (IIFE) for automatically activating the scrolling effect for content revealing feature
+            window.scrollTo(0, 0); // Resetting scroll to land at top of page, when navigating
             initPageFeatures();
             initScrollButtons();
       })();
