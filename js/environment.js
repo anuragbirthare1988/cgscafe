@@ -17,7 +17,7 @@ function getCurrentEnvironment() {
     }
 
     // 3. Default fallback for local testing
-    return "production";
+    return "development";
 }
 
 const ENVIRONMENTS = {
