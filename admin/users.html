@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff &amp; Role Management • CGS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/environment.js"></script>
+  <script src="/admin/session.js"></script>
+  <script src="/admin/rbac.js"></script>
+  <style>
+    :root {
+      --bg: #f6f1ea;
+      --surface: #fffdf9;
+      --surface-alt: #f2ece2;
+      --ink: #241914;
+      --muted: #6e5c52;
+      --border: #dfd4c5;
+      --accent: #3b2319;
+      --accent-hover: #27160f;
+      --accent-ink: #fffdf9;
+      --ok: #255c35;
+      --ok-bg: #e7f4eb;
+      --warn: #7a4b06;
+      --warn-bg: #fdf2df;
+      --danger: #8f2d24;
+      --danger-bg: #fbeae8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    body.admin-auth-pending {
+      visibility: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .nav-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-radius: 8px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--accent);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--surface-alt);
+    }
+
+    .btn-danger {
+      border-color: var(--danger);
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: #72221b;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .container {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: minmax(320px, 415px) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(36, 25, 20, 0.05);
+    }
+
+    .panel-title {
+      margin: 0 0 4px;
+      font-size: 16px;
+      color: var(--accent);
+    }
+
+    .panel-desc {
+      margin: 0 0 16px;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 13px;
+      font-size: 13px;
+    }
+
+    .field label {
+      font-weight: 600;
+    }
+
+    .hint-text {
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    input, select {
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font: inherit;
+      background: #ffffff;
+      color: var(--ink);
+    }
+
+    input:disabled, select:disabled {
+      background: var(--surface-alt);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    .perms-box {
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      border-radius: 10px;
+      padding: 10px 12px;
+      max-height: 220px;
+      overflow-y: auto;
+      margin-bottom: 14px;
+    }
+
+    .perms-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+
+    .perms-toolbar span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .perm-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 4px;
+      border-bottom: 1px dashed #e5dacb;
+      font-size: 12.5px;
+    }
+
+    .perm-item:last-child {
+      border-bottom: none;
+    }
+
+    .perm-item label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .perm-cat {
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .cred-box {
+      display: none;
+      margin-bottom: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--ok-bg);
+      border: 1px solid #b9dec4;
+      color: var(--ok);
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+
+    .cred-box code {
+      background: #ffffff;
+      padding: 2px 6px;
+      border-radius: 5px;
+      border: 1px solid #b9dec4;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .list-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .staff-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .staff-card {
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (max-width: 680px) {
+      .staff-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .staff-name-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .staff-name {
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-role {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    .badge-you {
+      background: #e6dfd5;
+      color: var(--ink);
+    }
+
+    .badge-active {
+      background: var(--ok-bg);
+      color: var(--ok);
+    }
+
+    .badge-inactive {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .badge-invited {
+      background: var(--warn-bg);
+      color: var(--warn);
+    }
+
+    .staff-meta {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+
+    .perm-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .perm-chip {
+      font-size: 11px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      border-radius: 6px;
+      color: var(--ink);
+    }
+
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 110px;
+    }
+
+    /* Interactive Semantic Modal Styles */
+    .cgs-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(36, 25, 20, 0.62);
+      backdrop-filter: blur(2px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .cgs-modal-backdrop.open {
+      display: flex;
+    }
+
+    .cgs-modal {
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--surface);
+      color: var(--ink);
+      border: 1px solid var(--border);
+      border-top: 5px solid var(--accent);
+      border-radius: 14px;
+      padding: 20px 22px;
+      box-shadow: 0 22px 52px rgba(0, 0, 0, 0.3);
+      transition: transform 0.14s ease, opacity 0.14s ease;
+    }
+
+    .cgs-modal.mode-error {
+      border-top-color: var(--danger);
+      background: linear-gradient(180deg, #fff6f5 0%, var(--surface) 72px);
+    }
+
+    .cgs-modal.mode-warning {
+      border-top-color: #c27803;
+      background: linear-gradient(180deg, #fffaf0 0%, var(--surface) 72px);
+    }
+
+    .cgs-modal.mode-confirm {
+      border-top-color: var(--accent);
+    }
+
+    .cgs-modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .cgs-modal-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .cgs-modal-badge {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .cgs-modal.mode-error .cgs-modal-badge {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid #e5b5b0;
+    }
+
+    .cgs-modal.mode-warning .cgs-modal-badge {
+      background: var(--warn-bg);
+      color: var(--warn);
+      border: 1px solid #ebd09d;
+    }
+
+    .cgs-modal.mode-confirm .cgs-modal-badge {
+      background: var(--surface-alt);
+      color: var(--accent);
+      border: 1px solid var(--border);
+    }
+
+    .cgs-modal-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .cgs-modal.mode-error .cgs-modal-title {
+      color: var(--danger);
+    }
+
+    .cgs-modal.mode-warning .cgs-modal-title {
+      color: var(--warn);
+    }
+
+    .cgs-modal-close {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .cgs-modal-close:hover {
+      background: var(--surface-alt);
+      color: var(--ink);
+    }
+
+    .cgs-modal-message {
+      margin: 0 0 14px;
+      padding: 11px 13px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+    }
+
+    .cgs-modal.mode-error .cgs-modal-message {
+      background: #fdf0ef;
+      border-color: #ebc2be;
+      color: #5c1913;
+    }
+
+    .cgs-modal.mode-warning .cgs-modal-message {
+      background: #fef6e4;
+      border-color: #ecd39c;
+      color: #5a3703;
+    }
+
+    .cgs-modal-tools {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .cgs-modal-tools.visible {
+      display: flex;
+    }
+
+    .cgs-modal-pre {
+      display: none;
+      margin: 0 0 14px;
+      padding: 11px 12px;
+      background: #1f1714;
+      color: #f8efe6;
+      border: 1px solid #3d2e28;
+      border-radius: 9px;
+      max-height: 190px;
+      overflow: auto;
+      font-size: 11.5px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .cgs-modal-pre.open {
+      display: block;
+    }
+
+    .cgs-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pw-override-box {
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body class="admin-auth-pending">
+  <header class="topbar">
+    <div class="brand">
+      <div>
+        <h1>Staff &amp; Role Management</h1>
+        <div class="brand-sub" id="currentOperatorLabel">Loading operator session...</div>
+      </div>
+    </div>
+    <nav class="nav-actions">
+      <a class="btn btn-secondary btn-sm" href="/admin/pos.html">POS</a>
+      <button type="button" class="btn btn-secondary btn-sm" id="btnRefreshUsers">Refresh</button>
+      <button type="button" class="btn btn-secondary btn-sm" id="btnLogout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Left Column: Onboard / Invite Staff Member -->
+    <section class="panel" aria-labelledby="inviteHeading">
+      <h2 class="panel-title" id="inviteHeading">Onboard Staff Member</h2>
+      <p class="panel-desc">
+        Provision a staff account using a temporary password (bypasses email limits) or send an email invite link.
+      </p>
+
+      <div id="tempCredBanner" class="cred-box" role="status"></div>
+
+      <form id="inviteStaffForm">
+        <div class="field">
+          <label for="inviteFullName">Full Name *</label>
+          <input type="text" id="inviteFullName" required placeholder="e.g., Rahul Sharma" />
+        </div>
+
+        <div class="field">
+          <label for="inviteEmail">Email Address *</label>
+          <input type="email" id="inviteEmail" required placeholder="operator@gmail.com" />
+        </div>
+
+        <div class="field">
+          <label for="invitePhone">Phone Number (10 digits) *</label>
+          <input type="tel" id="invitePhone" required pattern="[0-9]{10}" maxlength="10" placeholder="9876543210" />
+        </div>
+
+        <div class="field">
+          <label for="onboardingMode">Onboarding Method</label>
+          <select id="onboardingMode">
+            <option value="temp_password">Temporary Password (Recommended)</option>
+            <option value="invite">Email Invite Link</option>
+          </select>
+        </div>
+
+        <div class="field" id="tempPasswordFieldWrap">
+          <label for="inviteTempPassword">Temporary Password (Optional)</label>
+          <input
+            type="text"
+            id="inviteTempPassword"
+            minlength="8"
+            placeholder="Auto-generated if left blank"
+          />
+          <span class="hint-text">
+            Staff can sign in immediately with this password and update it on /admin/account-setup.html.
+          </span>
+        </div>
+
+        <div class="field">
+          <label for="inviteRolePreset">Role Preset</label>
+          <select id="inviteRolePreset">
+            <option value="cashier">Cashier / Counter</option>
+            <option value="manager">Floor / Shift Manager</option>
+            <option value="superuser">Superuser</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Allowed Operations</label>
+          <div class="perms-toolbar">
+            <span id="invitePermCount">0 selected</span>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-secondary btn-sm" id="btnInviteSelectAll">Select All</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnInviteClearAll">Clear All</button>
+            </div>
+          </div>
+          <div class="perms-box" id="invitePermissionsList"></div>
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="inviteIsActive" checked />
+          <label for="inviteIsActive" style="margin:0; font-weight:600; cursor:pointer;">
+            Account Active (can log in &amp; operate)
+          </label>
+        </div>
+
+        <button type="submit" class="btn" style="width:100%;" id="btnSendInvite">
+          Create Account &amp; Generate Password
+        </button>
+      </form>
+    </section>
+
+    <!-- Right Column: Existing Staff Accounts -->
+    <section class="panel" aria-labelledby="staffListHeading">
+      <div class="list-header">
+        <div>
+          <h2 class="panel-title" id="staffListHeading">Staff Accounts</h2>
+          <p class="panel-desc" style="margin:0;" id="staffCountLabel">Loading staff profiles...</p>
+        </div>
+        <input
+          type="search"
+          id="staffSearchInput"
+          placeholder="Search by name, email, phone, or role..."
+          style="min-width:230px;"
+        />
+      </div>
+
+      <div class="staff-cards" id="staffListContainer"></div>
+    </section>
+  </main>
+
+  <!-- Edit Role, Permissions & Password Override Modal -->
+  <div class="cgs-modal-backdrop" id="editRoleModalBackdrop" aria-hidden="true">
+    <div class="cgs-modal mode-confirm" role="dialog" aria-modal="true" aria-labelledby="editRoleModalTitle">
+      <div class="cgs-modal-header">
+        <div class="cgs-modal-title-group">
+          <span class="cgs-modal-badge">Access</span>
+          <h3 class="cgs-modal-title" id="editRoleModalTitle">Edit Staff Role &amp; Access</h3>
+        </div>
+        <button type="button" class="cgs-modal-close" id="btnCloseEditRoleModal" aria-label="Close">&times;</button>
+      </div>
+      <p class="panel-desc" id="editRoleTargetSummary"></p>
+
+      <form id="editRoleForm">
+        <input type="hidden" id="editTargetUserId" />
+        <input type="hidden" id="editTargetEmail" />
+
+        <div class="field">
+          <label for="editRoleSelect">Role</label>
+          <select id="editRoleSelect">
+            <option value="cashier">Cashier / Counter</option>
+            <option value="manager">Floor / Shift Manager</option>
+            <option value="superuser">Superuser</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Allowed Operations</label>
+          <div class="perms-toolbar">
+            <span id="editPermCount">0 selected</span>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-secondary btn-sm" id="btnEditSelectAll">Select All</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnEditClearAll">Clear All</button>
+            </div>
+          </div>
+          <div class="perms-box" id="editPermissionsList"></div>
+        </div>
+
+        <div class="pw-override-box">
+          <div class="field" style="margin-bottom:0;">
+            <label for="editNewPassword">Reset / Override Password (Optional)</label>
+            <input
+              type="text"
+              id="editNewPassword"
+              autocomplete="new-password"
+              placeholder="Leave blank to keep existing password"
+            />
+            <span class="hint-text">
+              Enter a new password (min 8 characters) only if you want to immediately override this user's existing password.
+            </span>
+          </div>
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="editIsActive" />
+          <label for="editIsActive" style="margin:0; cursor:pointer;">Account Active</label>
+        </div>
+
+        <div class="cgs-modal-footer">
+          <button type="button" class="btn btn-secondary" id="btnCancelEditRole">Cancel</button>
+          <button type="submit" class="btn" id="btnSaveEditRole">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Interactive Error, Warning & Confirmation Dialog -->
+  <div class="cgs-modal-backdrop" id="cgsDialogBackdrop" aria-hidden="true">
+    <div class="cgs-modal mode-error" id="cgsDialogCard" role="dialog" aria-modal="true" aria-labelledby="cgsDialogTitle">
+      <div class="cgs-modal-header">
+        <div class="cgs-modal-title-group">
+          <span class="cgs-modal-badge" id="cgsDialogBadge">Error</span>
+          <h3 class="cgs-modal-title" id="cgsDialogTitle">Notice</h3>
+        </div>
+        <button type="button" class="cgs-modal-close" id="cgsDialogCloseX" aria-label="Close (Esc)">&times;</button>
+      </div>
+
+      <div class="cgs-modal-message" id="cgsDialogMessage"></div>
+
+      <div class="cgs-modal-tools" id="cgsDialogTools">
+        <button type="button" class="btn btn-secondary btn-sm" id="cgsToggleDetailsBtn">
+          Show Technical Payload
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="cgsCopyErrorBtn">
+          Copy Error
+        </button>
+      </div>
+
+      <pre class="cgs-modal-pre" id="cgsDialogDetails"></pre>
+
+      <div class="cgs-modal-footer" id="cgsDialogFooter">
+        <button type="button" class="btn btn-danger" id="cgsDialogOk">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PERMISSION_CATALOG = [
+      { key: "pos_access", label: "Access POS Screen", category: "Core POS" },
+      { key: "modify_table_items", label: "Add / Modify Table Items", category: "Core POS" },
+      { key: "send_kot", label: "Send & Reprint KOT", category: "Core POS" },
+      { key: "settle_bills", label: "Settle & Close Bills", category: "Core POS" },
+      { key: "reprint_receipt", label: "Reprint Receipts & Send WA", category: "Core POS" },
+      { key: "waive_off", label: "Waive-Off Bill / Items", category: "Sensitive Actions" },
+      { key: "issue_refund", label: "Issue Refund", category: "Sensitive Actions" },
+      { key: "replace_settled_items", label: "Replace Settled Items", category: "Sensitive Actions" },
+      { key: "edit_taxes_charges", label: "Edit Taxes, Service Charge & UPI", category: "Admin & Controls" },
+      { key: "view_reports", label: "View Sales Analytics & Reports", category: "Admin & Controls" },
+      { key: "manage_users", label: "Manage Staff Users & Roles", category: "Admin & Controls" }
+    ];
+
+    const ROLE_PRESETS = {
+      cashier: [
+        "pos_access",
+        "modify_table_items",
+        "send_kot",
+        "settle_bills",
+        "reprint_receipt"
+      ],
+      manager: [
+        "pos_access",
+        "modify_table_items",
+        "send_kot",
+        "settle_bills",
+        "reprint_receipt",
+        "waive_off",
+        "issue_refund",
+        "replace_settled_items",
+        "view_reports"
+      ],
+      superuser: PERMISSION_CATALOG.map((p) => p.key)
+    };
+
+    let currentAuthUser = null;
+    let currentStaffProfile = null;
+    let allStaffProfiles = [];
+    let lastDialogErrorText = "";
+
+    function getClient() {
+      return window.supabaseClient || (typeof supabaseClient !== "undefined" ? supabaseClient : null);
+    }
+
+    function setDialogMode(mode = "error") {
+      const card = document.getElementById("cgsDialogCard");
+      const badge = document.getElementById("cgsDialogBadge");
+      card.classList.remove("mode-error", "mode-warning", "mode-confirm");
+
+      if (mode === "warning") {
+        card.classList.add("mode-warning");
+        badge.textContent = "Warning";
+      } else if (mode === "confirm") {
+        card.classList.add("mode-confirm");
+        badge.textContent = "Confirm";
+      } else {
+        card.classList.add("mode-error");
+        badge.textContent = "Error";
+      }
+    }
+
+    function showErrorDialog(title, message, rawDetails = null, mode = "error") {
+      const backdrop = document.getElementById("cgsDialogBackdrop");
+      const titleEl = document.getElementById("cgsDialogTitle");
+      const msgEl = document.getElementById("cgsDialogMessage");
+      const toolsEl = document.getElementById("cgsDialogTools");
+      const toggleBtn = document.getElementById("cgsToggleDetailsBtn");
+      const copyBtn = document.getElementById("cgsCopyErrorBtn");
+      const detailsEl = document.getElementById("cgsDialogDetails");
+      const footerEl = document.getElementById("cgsDialogFooter");
+
+      setDialogMode(mode === "warning" ? "warning" : "error");
+      titleEl.textContent = title || (mode === "warning" ? "Attention Needed" : "Action Failed");
+      msgEl.textContent = message || "An unexpected error occurred.";
+
+      const formattedDetails =
+        rawDetails !== null && rawDetails !== undefined && rawDetails !== ""
+          ? typeof rawDetails === "string"
+            ? rawDetails
+            : JSON.stringify(rawDetails, null, 2)
+          : "";
+
+      lastDialogErrorText = [
+        `${titleEl.textContent}: ${msgEl.textContent}`,
+        formattedDetails ? `\nDetails:\n${formattedDetails}` : ""
+      ].join("");
+
+      detailsEl.textContent = formattedDetails;
+      detailsEl.classList.remove("open");
+
+      if (formattedDetails) {
+        toggleBtn.style.display = "inline-flex";
+        toggleBtn.textContent = "Show Technical Payload";
+        toggleBtn.onclick = () => {
+          const isOpen = detailsEl.classList.toggle("open");
+          toggleBtn.textContent = isOpen ? "Hide Technical Payload" : "Show Technical Payload";
+        };
+      } else {
+        toggleBtn.style.display = "none";
+      }
+
+      toolsEl.classList.add("visible");
+      copyBtn.textContent = "Copy Error";
+      copyBtn.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(lastDialogErrorText);
+          copyBtn.textContent = "Copied!";
+          setTimeout(() => {
+            copyBtn.textContent = "Copy Error";
+          }, 1500);
+        } catch (_) {
+          detailsEl.classList.add("open");
+          toggleBtn.textContent = "Hide Technical Payload";
+          copyBtn.textContent = "Select Below";
+        }
+      };
+
+      const okClass = mode === "warning" ? "btn" : "btn btn-danger";
+      footerEl.innerHTML = `<button type="button" class="${okClass}" id="cgsDialogOkBtn">Dismiss</button>`;
+      document.getElementById("cgsDialogOkBtn").addEventListener("click", closeDialog);
+
+      backdrop.classList.add("open");
+      backdrop.setAttribute("aria-hidden", "false");
+      document.getElementById("cgsDialogOkBtn").focus();
+    }
+
+    function showConfirmDialog(title, message, confirmText = "Confirm", danger = false) {
+      return new Promise((resolve) => {
+        const backdrop = document.getElementById("cgsDialogBackdrop");
+        const titleEl = document.getElementById("cgsDialogTitle");
+        const msgEl = document.getElementById("cgsDialogMessage");
+        const toolsEl = document.getElementById("cgsDialogTools");
+        const detailsEl = document.getElementById("cgsDialogDetails");
+        const footerEl = document.getElementById("cgsDialogFooter");
+
+        setDialogMode(danger ? "warning" : "confirm");
+        if (danger) {
+          document.getElementById("cgsDialogBadge").textContent = "Warning";
+        }
+
+        titleEl.textContent = title || "Confirm Action";
+        msgEl.textContent = message || "";
+        toolsEl.classList.remove("visible");
+        detailsEl.classList.remove("open");
+        detailsEl.textContent = "";
+
+        footerEl.innerHTML = `
+          <button type="button" class="btn btn-secondary" id="cgsConfirmCancel">Cancel</button>
+          <button type="button" class="btn ${danger ? "btn-danger" : ""}" id="cgsConfirmOk">${confirmText}</button>
+        `;
+
+        const cleanup = (result) => {
+          closeDialog();
+          resolve(result);
+        };
+
+        document.getElementById("cgsConfirmCancel").addEventListener("click", () => cleanup(false));
+        document.getElementById("cgsConfirmOk").addEventListener("click", () => cleanup(true));
+
+        backdrop.classList.add("open");
+        backdrop.setAttribute("aria-hidden", "false");
+        document.getElementById("cgsConfirmCancel").focus();
+      });
+    }
+
+    function closeDialog() {
+      const backdrop = document.getElementById("cgsDialogBackdrop");
+      backdrop.classList.remove("open");
+      backdrop.setAttribute("aria-hidden", "true");
+    }
+
+    document.getElementById("cgsDialogCloseX").addEventListener("click", closeDialog);
+    document.getElementById("cgsDialogBackdrop").addEventListener("click", (e) => {
+      if (e.target.id === "cgsDialogBackdrop") closeDialog();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && document.getElementById("cgsDialogBackdrop").classList.contains("open")) {
+        closeDialog();
+      }
+    });
+
+    async function extractFunctionError(error, data = null) {
+      let parsedBody = null;
+
+      if (error?.context) {
+        try {
+          if (typeof error.context.json === "function") {
+            parsedBody = await error.context.clone().json();
+          } else if (typeof error.context.text === "function") {
+            const txt = await error.context.clone().text();
+            try {
+              parsedBody = JSON.parse(txt);
+            } catch (_) {
+              parsedBody = txt;
+            }
+          }
+        } catch (_) {}
+      }
+
+      const message =
+        (parsedBody && typeof parsedBody === "object" && (parsedBody.error || parsedBody.message || parsedBody.msg)) ||
+        (typeof parsedBody === "string" && parsedBody.trim()) ||
+        data?.error ||
+        error?.message ||
+        "Request failed with an unknown error.";
+
+      const details = parsedBody ?? data ?? {
+        name: error?.name,
+        message: error?.message,
+        code: error?.code,
+        details: error?.details,
+        hint: error?.hint
+      };
+
+      return { message, details };
+    }
+
+    async function invokeAdminFunction(payload) {
+      const client = getClient();
+      const { data, error } = await client.functions.invoke("invite-staff-user", {
+        body: payload
+      });
+
+      if (error) {
+        const extracted = await extractFunctionError(error, data);
+        throw Object.assign(new Error(extracted.message), { rawDetails: extracted.details });
+      }
+
+      if (data && typeof data === "object" && data.error) {
+        throw Object.assign(new Error(data.error), { rawDetails: data });
+      }
+
+      return data;
+    }
+
+    function renderPermissionCheckboxes(containerId, selectedKeys, onChangeCallback) {
+      const container = document.getElementById(containerId);
+      const selectedSet = new Set(selectedKeys || []);
+
+      container.innerHTML = PERMISSION_CATALOG.map((perm) => {
+        const checked = selectedSet.has(perm.key) ? "checked" : "";
+        return `
+          <div class="perm-item">
+            <label>
+              <input
+                type="checkbox"
+                class="perm-cb"
+                value="${perm.key}"
+                ${checked}
+              />
+              <span>${perm.label}</span>
+            </label>
+            <span class="perm-cat">${perm.category}</span>
+          </div>
+        `;
+      }).join("");
+
+      container.querySelectorAll(".perm-cb").forEach((cb) => {
+        cb.addEventListener("change", () => {
+          if (typeof onChangeCallback === "function") {
+            onChangeCallback(getCheckedPermissions(containerId));
+          }
+        });
+      });
+
+      if (typeof onChangeCallback === "function") {
+        onChangeCallback(getCheckedPermissions(containerId));
+      }
+    }
+
+    function getCheckedPermissions(containerId) {
+      return Array.from(
+        document.querySelectorAll(`#${containerId} .perm-cb:checked`)
+      ).map((cb) => cb.value);
+    }
+
+    function updateInvitePermCount(selectedKeys) {
+      document.getElementById("invitePermCount").textContent =
+        `${selectedKeys.length} of ${PERMISSION_CATALOG.length} selected`;
+    }
+
+    function updateEditPermCount(selectedKeys) {
+      document.getElementById("editPermCount").textContent =
+        `${selectedKeys.length} of ${PERMISSION_CATALOG.length} selected`;
+    }
+
+    function applyInviteRolePreset(roleKey) {
+      const preset = ROLE_PRESETS[roleKey] || ROLE_PRESETS.cashier;
+      renderPermissionCheckboxes("invitePermissionsList", preset, updateInvitePermCount);
+    }
+
+    function normalizePermissions(rawPerms) {
+      if (Array.isArray(rawPerms)) return rawPerms;
+      if (rawPerms && typeof rawPerms === "object") {
+        return Object.entries(rawPerms)
+          .filter(([, enabled]) => Boolean(enabled))
+          .map(([key]) => key);
+      }
+      return [];
+    }
+
+    function permissionLabel(key) {
+      return PERMISSION_CATALOG.find((p) => p.key === key)?.label || key;
+    }
+
+    function renderStaffList() {
+      const container = document.getElementById("staffListContainer");
+      const query = document.getElementById("staffSearchInput").value.trim().toLowerCase();
+
+      const filtered = allStaffProfiles.filter((item) => {
+        if (!query) return true;
+        const haystack = [
+          item.full_name,
+          item.email,
+          item.phone,
+          item.role,
+          item.invite_status
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return haystack.includes(query);
+      });
+
+      document.getElementById("staffCountLabel").textContent =
+        `${filtered.length} of ${allStaffProfiles.length} staff accounts shown`;
+
+      if (!filtered.length) {
+        container.innerHTML = `<p class="panel-desc">No matching staff accounts found.</p>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map((staff) => {
+        const isSelf = currentAuthUser && staff.id === currentAuthUser.id;
+        const isActive = staff.is_active !== false;
+        const inviteStatus = String(staff.invite_status || "active").toLowerCase();
+        const roleLower = String(staff.role || "cashier").toLowerCase();
+        const perms = normalizePermissions(staff.permissions);
+
+        const statusBadge = !isActive
+          ? `<span class="badge badge-inactive">inactive</span>`
+          : inviteStatus === "invited" || inviteStatus === "pending" || inviteStatus === "pending_password"
+          ? `<span class="badge badge-invited">${inviteStatus.replace("_", " ")}</span>`
+          : `<span class="badge badge-active">active</span>`;
+
+        const chipsHtml = perms.length
+          ? perms.map((k) => `<span class="perm-chip">${permissionLabel(k)}</span>`).join("")
+          : `<span class="perm-chip" style="color:var(--muted);">No specific permissions assigned</span>`;
+
+        return `
+          <article class="staff-card" data-user-id="${staff.id}">
+            <div>
+              <div class="staff-name-row">
+                <span class="staff-name">${escapeHtml(staff.full_name || "Unnamed Operator")}</span>
+                <span class="badge badge-role">${escapeHtml(roleLower)}</span>
+                ${statusBadge}
+                ${isSelf ? `<span class="badge badge-you">you</span>` : ""}
+              </div>
+              <div class="staff-meta">
+                ${escapeHtml(staff.email || "")}
+                ${staff.phone ? ` &bull; +91 ${escapeHtml(staff.phone)}` : ""}
+              </div>
+              <div class="perm-chips">${chipsHtml}</div>
+            </div>
+
+            <div class="card-actions">
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                onclick="openEditRoleModal('${staff.id}')"
+              >
+                Edit Roles
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                ${isSelf ? "disabled title='Cannot deactivate your own active session'" : ""}
+                onclick="toggleStaffActive('${staff.id}', ${!isActive})"
+              >
+                ${isActive ? "Deactivate" : "Activate"}
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                ${isSelf ? "disabled title='Cannot delete your own account'" : ""}
+                onclick="deleteStaffUser('${staff.id}', '${escapeJs(staff.email || staff.full_name || "this user")}')"
+              >
+                Delete User
+              </button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function escapeJs(str) {
+      return String(str).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    }
+
+    async function loadStaffProfiles() {
+      const client = getClient();
+      const { data, error } = await client
+        .from("staff_profiles")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        showErrorDialog(
+          "Failed to Load Staff Profiles",
+          error.message || "Could not load staff_profiles from database.",
+          error,
+          "error"
+        );
+        return;
+      }
+
+      allStaffProfiles = data || [];
+      renderStaffList();
+    }
+
+    window.openEditRoleModal = function openEditRoleModal(userId) {
+      const staff = allStaffProfiles.find((s) => s.id === userId);
+      if (!staff) {
+        showErrorDialog("User Not Found", "Selected staff record could not be found.", null, "warning");
+        return;
+      }
+
+      document.getElementById("editTargetUserId").value = staff.id;
+      document.getElementById("editTargetEmail").value = staff.email || "";
+      document.getElementById("editRoleTargetSummary").textContent =
+        `${staff.full_name || "Staff"} (${staff.email || ""})`;
+      document.getElementById("editRoleSelect").value = String(staff.role || "cashier").toLowerCase();
+      document.getElementById("editIsActive").checked = staff.is_active !== false;
+      document.getElementById("editNewPassword").value = "";
+
+      renderPermissionCheckboxes(
+        "editPermissionsList",
+        normalizePermissions(staff.permissions),
+        updateEditPermCount
+      );
+
+      const backdrop = document.getElementById("editRoleModalBackdrop");
+      backdrop.classList.add("open");
+      backdrop.setAttribute("aria-hidden", "false");
+    };
+
+    function closeEditRoleModal() {
+      document.getElementById("editNewPassword").value = "";
+      const backdrop = document.getElementById("editRoleModalBackdrop");
+      backdrop.classList.remove("open");
+      backdrop.setAttribute("aria-hidden", "true");
+    }
+
+    document.getElementById("btnCloseEditRoleModal").addEventListener("click", closeEditRoleModal);
+    document.getElementById("btnCancelEditRole").addEventListener("click", closeEditRoleModal);
+
+    document.getElementById("btnEditSelectAll").addEventListener("click", () => {
+      renderPermissionCheckboxes(
+        "editPermissionsList",
+        PERMISSION_CATALOG.map((p) => p.key),
+        updateEditPermCount
+      );
+    });
+
+    document.getElementById("btnEditClearAll").addEventListener("click", () => {
+      renderPermissionCheckboxes("editPermissionsList", [], updateEditPermCount);
+    });
+
+    document.getElementById("editRoleForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const userId = document.getElementById("editTargetUserId").value;
+      const targetEmail = document.getElementById("editTargetEmail").value;
+      const role = document.getElementById("editRoleSelect").value;
+      const isActive = document.getElementById("editIsActive").checked;
+      const permissions = getCheckedPermissions("editPermissionsList");
+      const newPassword = document.getElementById("editNewPassword").value.trim();
+
+      if (newPassword && newPassword.length < 8) {
+        showErrorDialog(
+          "Password Too Short",
+          "New password must be at least 8 characters long, or leave it blank to keep the existing password.",
+          null,
+          "warning"
+        );
+        return;
+      }
+
+      const saveBtn = document.getElementById("btnSaveEditRole");
+      saveBtn.disabled = true;
+
+      try {
+        const client = getClient();
+        const { error } = await client
+          .from("staff_profiles")
+          .update({
+            role,
+            permissions,
+            is_active: isActive,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", userId);
+
+        if (error) {
+          throw Object.assign(new Error(error.message), { rawDetails: error });
+        }
+
+        if (newPassword) {
+          await invokeAdminFunction({
+            action: "reset_password",
+            user_id: userId,
+            email: targetEmail,
+            new_password: newPassword
+          });
+
+          const banner = document.getElementById("tempCredBanner");
+          banner.innerHTML = `
+            <div><strong>Password Updated:</strong> ${escapeHtml(targetEmail || userId)}</div>
+            <div style="margin-top:4px;">New Password: <code>${escapeHtml(newPassword)}</code></div>
+            <div style="margin-top:4px; font-size:11.5px;">Share this credential directly so the user can log in immediately.</div>
+          `;
+          banner.style.display = "block";
+        }
+
+        closeEditRoleModal();
+        await loadStaffProfiles();
+      } catch (err) {
+        showErrorDialog("Failed to Update Staff Access", err.message, err.rawDetails || err, "error");
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+
+    window.toggleStaffActive = async function toggleStaffActive(userId, nextActive) {
+      try {
+        const client = getClient();
+        const { error } = await client
+          .from("staff_profiles")
+          .update({
+            is_active: Boolean(nextActive),
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", userId);
+
+        if (error) {
+          throw Object.assign(new Error(error.message), { rawDetails: error });
+        }
+
+        await loadStaffProfiles();
+      } catch (err) {
+        showErrorDialog("Failed to Update Account Status", err.message, err.rawDetails || err, "error");
+      }
+    };
+
+    window.deleteStaffUser = async function deleteStaffUser(userId, displayLabel) {
+      const confirmed = await showConfirmDialog(
+        "Delete Staff Account",
+        `Permanently delete ${displayLabel} from Authentication and Staff Profiles? Historical bills, KOTs, and activity logs will have their operator reference cleared (set to NULL) and remain preserved.`,
+        "Delete User",
+        true
+      );
+      if (!confirmed) return;
+
+      try {
+        await invokeAdminFunction({
+          action: "delete",
+          user_id: userId
+        });
+
+        await loadStaffProfiles();
+      } catch (err) {
+        showErrorDialog("User Deletion Failed", err.message, err.rawDetails || err, "error");
+      }
+    };
+
+    document.getElementById("onboardingMode").addEventListener("change", (e) => {
+      const isTemp = e.target.value === "temp_password";
+      document.getElementById("tempPasswordFieldWrap").style.display = isTemp ? "flex" : "none";
+      document.getElementById("btnSendInvite").textContent = isTemp
+        ? "Create Account & Generate Password"
+        : "Send Account Invite";
+    });
+
+    document.getElementById("inviteRolePreset").addEventListener("change", (e) => {
+      applyInviteRolePreset(e.target.value);
+    });
+
+    document.getElementById("btnInviteSelectAll").addEventListener("click", () => {
+      renderPermissionCheckboxes(
+        "invitePermissionsList",
+        PERMISSION_CATALOG.map((p) => p.key),
+        updateInvitePermCount
+      );
+    });
+
+    document.getElementById("btnInviteClearAll").addEventListener("click", () => {
+      renderPermissionCheckboxes("invitePermissionsList", [], updateInvitePermCount);
+    });
+
+    document.getElementById("inviteStaffForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const banner = document.getElementById("tempCredBanner");
+      banner.style.display = "none";
+
+      const fullName = document.getElementById("inviteFullName").value.trim();
+      const email = document.getElementById("inviteEmail").value.trim().toLowerCase();
+      const phone = document.getElementById("invitePhone").value.trim();
+      const mode = document.getElementById("onboardingMode").value;
+      const customTempPassword = document.getElementById("inviteTempPassword").value.trim();
+      const role = document.getElementById("inviteRolePreset").value;
+      const permissions = getCheckedPermissions("invitePermissionsList");
+      const isActive = document.getElementById("inviteIsActive").checked;
+
+      const submitBtn = document.getElementById("btnSendInvite");
+      submitBtn.disabled = true;
+
+      try {
+        const result = await invokeAdminFunction({
+          action: mode,
+          full_name: fullName,
+          email,
+          phone,
+          role,
+          permissions,
+          is_active: isActive,
+          temp_password: mode === "temp_password" && customTempPassword ? customTempPassword : undefined,
+          redirect_to: `${window.location.origin}/admin/account-setup.html`
+        });
+
+        document.getElementById("inviteStaffForm").reset();
+        document.getElementById("inviteIsActive").checked = true;
+        document.getElementById("onboardingMode").value = "temp_password";
+        document.getElementById("tempPasswordFieldWrap").style.display = "flex";
+        document.getElementById("btnSendInvite").textContent = "Create Account & Generate Password";
+        applyInviteRolePreset("cashier");
+
+        if (result?.temp_password) {
+          banner.innerHTML = `
+            <div><strong>Account Provisioned:</strong> ${escapeHtml(email)}</div>
+            <div style="margin-top:4px;">Temporary Password: <code>${escapeHtml(result.temp_password)}</code></div>
+            <div style="margin-top:4px; font-size:11.5px;">Share this credential directly with the staff member. They can change it anytime at <code>/admin/account-setup.html</code>.</div>
+          `;
+        } else {
+          banner.innerHTML = `<div>${escapeHtml(result?.message || `Invite sent to ${email}.`)}</div>`;
+        }
+        banner.style.display = "block";
+
+        await loadStaffProfiles();
+      } catch (err) {
+        showErrorDialog("Onboarding Failed", err.message, err.rawDetails || err, "error");
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    document.getElementById("staffSearchInput").addEventListener("input", renderStaffList);
+    document.getElementById("btnRefreshUsers").addEventListener("click", loadStaffProfiles);
+    document.getElementById("btnLogout").addEventListener("click", () => {
+      if (typeof window.logout === "function") {
+        window.logout();
+      } else {
+        window.location.href = "/authorization/login.html";
+      }
+    });
+
+    async function initUsersPage() {
+      const ok = await requireLogin();
+      if (!ok) return;
+
+      const client = getClient();
+      const { data: { user }, error } = await client.auth.getUser();
+      if (error || !user) {
+        showErrorDialog(
+          "Session Error",
+          error?.message || "Could not verify authenticated operator.",
+          error,
+          "error"
+        );
+        return;
+      }
+
+      currentAuthUser = user;
+      if (typeof window.loadCurrentStaffProfile === "function") {
+        currentStaffProfile = await window.loadCurrentStaffProfile().catch(() => null);
+      }
+
+      const displayRole = String(currentStaffProfile?.role || "operator").toUpperCase();
+      document.getElementById("currentOperatorLabel").textContent =
+        `${currentStaffProfile?.full_name || user.email} • ${displayRole}`;
+
+      applyInviteRolePreset("cashier");
+      await loadStaffProfiles();
+    }
+
+    initUsersPage();
+  </script>
+</body>
+</html>
